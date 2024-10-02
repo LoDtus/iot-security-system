@@ -11,8 +11,7 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
     const [switchState, setSwitchstate] = useState([]);
     const [history, setHistory] = useState([]);
     const [wifiPassword, setWifiPassword] = useState(null);
-    const [rfidID, setRfidID] = useState([]);
-    const [rfid, setRfid] = useState([]);
+    const [rfid, setRfid] = useState('');
     useEffect(() => {
         const db = database;
         const dataUser = ref(db, `users/${username}/${idDevice}/`);
@@ -20,6 +19,7 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
             const temp = snapshot.val();
             if (temp && temp.status && temp.history) {
                 setWifiPassword(temp.setting.wifiPassword)
+                setRfid(temp.status.rfid.uid);
                 setSwitchstate([
                     temp.status.door,
                     temp.status.system,
@@ -28,7 +28,7 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
                     temp.status['mc-38'],
                     temp.status['hc-sr04']
                 ]);
-    
+
                 setHistory([])
                 let listHis = Object.keys(temp.history).slice().reverse()  
                 for (let i=0; i<listHis.length; i++) {
@@ -37,24 +37,6 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
                         tempList.push(temp.history[`${listHis[i]}`])
                         return tempList;
                     })
-                }
-                
-                setRfid([]);
-                setRfidID([]);
-                let listRfid = Object.keys(temp.status.rfid);              
-                for (let i=0; i<listRfid.length; i++) {
-                    if (listRfid[i].includes('rfid-')) {
-                        setRfid(prevState => {
-                            let tempList = [...prevState];
-                            tempList.push(temp.status.rfid[`${listRfid[i]}`])
-                            return tempList;
-                        })
-                        setRfidID(prevState => {
-                            let tempList = [...prevState];
-                            tempList.push(listRfid[i]);
-                            return tempList;
-                        })
-                    }
                 }
             }
         });
@@ -131,16 +113,9 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
         }
     }, [openRFID]);
 
-    // 93 62 2F 29
-    function deleteRfid_byID(i) {        
-        remove(ref(database, `users/${username}/${idDevice}/status/rfid/${rfidID[i]}`))
-            .then(() => {
-                console.log("Object deleted successfully");
-            })
-            .catch((error) => {
-                console.error("Error deleting object: ", error);
-            });
-    }
+    useEffect(() => {
+        setOpenRFID(false);
+    }, [rfid])
 
     const [newDeviceName, setNewDeviceName] = useState('');
     const [newWfName, setNewWfName] = useState('')
@@ -216,7 +191,6 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
                 setOpenRFID={setOpenRFID}
                 saveInfo={saveInfo}
                 rfid={rfid}
-                deleteRfid_byID={deleteRfid_byID}
             />
         </div>
     )

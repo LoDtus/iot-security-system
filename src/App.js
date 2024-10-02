@@ -26,15 +26,13 @@ function App() {
 		<div className="App bg-[#fafafa]">
             <Routes>
                 <Route path="/" 
-                    element={
-                    <SignIn
+                    element={<SignIn
                         database={db}
                         setUsername={setUsername}
                     />}
                 />
                 <Route path="/signUp"
-                    element={
-                    <SignUp
+                    element={<SignUp
                         database={db}
                     />}    
                 />
