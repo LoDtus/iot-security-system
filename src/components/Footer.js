@@ -7,7 +7,14 @@ function Footer() {
                 <div className="first-footer md:flex">
                     <div className="about-footer basis-2/6 mt-5">
                         <p className='title font-semibold text-[#292929] text-xl mb-2'>Project: Security System IOT</p>
-                        <p className='mb-1'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Culpa rem minus veniam delectus quidem assumenda necessitatibus magni facilis inventore. Animi cum in quis voluptate dicta suscipit eum esse quasi minus?</p>
+                        <p className='mb-1'>Dự án phục vụ cho bài tập lớn của môn học Internet of Things tại trường Đại học Thăng Long.</p>
+                        <p className='mb-1'>Cả dự án được tạo nên bởi các thành viên:</p>
+                        <ul className='list-inside list-disc'>
+                            <li>A42264 - Phạm Duy Đạt</li>
+                            <li>A42695 - Nguyễn Trung Long</li>
+                            <li>A42968 - Đặng Việt Hoàng</li>
+                            <li>A43195 - Vũ Đức Ninh</li>
+                        </ul>
                         <span className='text-[#292929] font-semibold'>Source Code: </span>
                         <a className='underline underline-offset-2 hover:text-[#292929] duration-200' href='https://github.com/LoDtus'>here</a>
                     </div>

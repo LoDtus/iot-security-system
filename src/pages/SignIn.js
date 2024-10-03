@@ -3,14 +3,29 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { getDatabase, ref, onValue, update } from "firebase/database";
 
-function SignIn({database, setUsername}) {
+function SignIn({database, username, setUsername}) {
     const navigate = useNavigate();
     const listUsername = useRef([]);
     const listPassword = useRef([]);
     const [usernameInp, setUsernameInp] = useState('');
     const [passwordInp, setPasswordInp] = useState('');
     const [remember, setRemember] = useState(false);
-    const savedUser = useRef(null);
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+        if (savedUser) {
+            let temp = JSON.parse(savedUser)
+            setUserData(temp);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (userData) {
+            setUsername(`username-${userData.username}`);
+            navigate(`/${userData.username}`);
+        }
+    }, [userData]);
     
     // Lấy dữ liệu listUsername và listPassword:
     useEffect(() => {
@@ -53,11 +68,9 @@ function SignIn({database, setUsername}) {
                     'password': passwordInp
                 }
                 if (remember) {
-                    // localStorage.setItem('user', JSON.stringify(userData));
-                    sessionStorage.setItem('user', JSON.stringify(userData));
-                } else {
-                    sessionStorage.setItem('user', JSON.stringify(userData));
+                    localStorage.setItem('user', JSON.stringify(userData));
                 }
+                sessionStorage.setItem('user', JSON.stringify(userData));
                 navigate(`/${usernameInp}`);
             }
         }

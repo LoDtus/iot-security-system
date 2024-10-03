@@ -13,34 +13,36 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
     const [wifiPassword, setWifiPassword] = useState(null);
     const [rfid, setRfid] = useState('');
     useEffect(() => {
-        const db = database;
-        const dataUser = ref(db, `users/${username}/${idDevice}/`);
-        const unsubscribe = onValue(dataUser, (snapshot) => {
-            const temp = snapshot.val();
-            if (temp && temp.status && temp.history) {
-                setWifiPassword(temp.setting.wifiPassword)
-                setRfid(temp.status.rfid.uid);
-                setSwitchstate([
-                    temp.status.door,
-                    temp.status.system,
-                    temp.status.notification,
-                    temp.status.alarm,
-                    temp.status['mc-38'],
-                    temp.status['hc-sr04']
-                ]);
-
-                setHistory([])
-                let listHis = Object.keys(temp.history).slice().reverse()  
-                for (let i=0; i<listHis.length; i++) {
-                    setHistory(prevState => {
-                        let tempList = [...prevState];
-                        tempList.push(temp.history[`${listHis[i]}`])
-                        return tempList;
-                    })
+        // if (idDevice.length > 0) {
+            const db = database;
+            const dataUser = ref(db, `users/${username}/${idDevice}/`);
+            const unsubscribe = onValue(dataUser, (snapshot) => {
+                const temp = snapshot.val();
+                if (temp && temp.status && temp.history) {
+                    setWifiPassword(temp.setting.wifiPassword)
+                    setRfid(temp.status.rfid.uid);
+                    setSwitchstate([
+                        temp.status.door,
+                        temp.status.system,
+                        temp.status.notification,
+                        temp.status.alarm,
+                        temp.status['mc-38'],
+                        temp.status['hc-sr04']
+                    ]);
+    
+                    setHistory([])
+                    let listHis = Object.keys(temp.history).slice().reverse()  
+                    for (let i=0; i<listHis.length; i++) {
+                        setHistory(prevState => {
+                            let tempList = [...prevState];
+                            tempList.push(temp.history[`${listHis[i]}`])
+                            return tempList;
+                        })
+                    }
                 }
-            }
-        });
-        return () => unsubscribe();
+            });
+            return () => unsubscribe();
+        // }
     }, [database, idDevice]);
 
     // Control Pannel: --------------------------------------------
@@ -129,10 +131,10 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
         if (newWfName !== wifiName && newWfName.length !== 0) {
             let deviceBLE, characteristicBLE;
             connectDevice(deviceBLE, characteristicBLE, {
-                username: username.slice(9),
-                deviceId: idDevice,
                 wfName: newWfName,
-                wfPassword: wifiPassword
+                wfPassword: wifiPassword,
+                username: username.slice(9),
+                deviceId: idDevice
             }, update(ref(database, `users/${username}/${idDevice}/setting`), {
                 wifiName: newWfName,
             }));
@@ -140,10 +142,10 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
         if (newWfPassword !== wifiPassword && newWfPassword.length !== 0) {
             let deviceBLE, characteristicBLE;
             connectDevice(deviceBLE, characteristicBLE, {
-                username: username.slice(9),
-                deviceId: idDevice,
                 wfName: wifiName,
-                wfPassword: newWfPassword
+                wfPassword: newWfPassword,
+                username: username.slice(9),
+                deviceId: idDevice
             }, update(ref(database, `users/${username}/${idDevice}/setting`), {
                 wifiPassword: newWfPassword,
             }));
@@ -151,7 +153,7 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
     }
 
     return (
-        <div className="dashboard basis-[80%] flex">
+        <div className="dashboard h-[85vh] basis-[80%] flex">
             <div className='flex flex-col basis-[70%]'>
                 <div className="flex">
                     {/* Control Pannel */}
@@ -170,9 +172,9 @@ function Dashboard({database, username, idDevice, deviceName, wifiName, openRFID
                 </div>
 
                 {/* History */}
-                <div className='border bg-white ml-2 rounded-lg shadow-lg py-5 flex flex-col'>
+                <div className='border h-full bg-white ml-2 rounded-lg shadow-lg py-5 flex flex-col'>
                     <div className='text-2xl font-semibold mb-3 px-8'>History</div>
-                    <div className='h-[200px] overflow-y-auto px-8'>
+                    <div className='max-h-[27vh] overflow-y-auto px-8'>
                         {history.map((item, index) => (
                             <div className='border-b pb-2 mb-2' key={index}>{item}</div>
                         ))}

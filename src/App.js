@@ -11,14 +11,12 @@ function App() {
     const dbRef = ref(database);
     const db = database;
     const [username, setUsername] = useState(null);
-    const [password, setPassword] = useState(null);
 
     useEffect(() => {
         const savedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
         if (savedUser) {
             const userData = JSON.parse(savedUser);
-            setUsername(userData.username);
-            setPassword(userData.password);
+            setUsername(`username-${userData.username}`);
         }
     }, []);
 
@@ -28,12 +26,14 @@ function App() {
                 <Route path="/" 
                     element={<SignIn
                         database={db}
+                        username={username}
                         setUsername={setUsername}
                     />}
                 />
                 <Route path="/signUp"
                     element={<SignUp
                         database={db}
+                        setUsername={setUsername}
                     />}    
                 />
                 {username !== null && <Route path={`/${username.slice(9)}/*`}

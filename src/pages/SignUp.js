@@ -3,7 +3,23 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { ref, onValue, set } from "firebase/database";
 
-function SignUp({database}) {
+function SignUp({database, setUsername}) {
+    const [userData, setUserData] = useState(null);
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+        if (savedUser) {
+            let temp = JSON.parse(savedUser)
+            setUserData(temp);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (userData) {
+            setUsername(`username-${userData.username}`);
+            navigate(`/${userData.username}`);
+        }
+    }, [userData]);
+
     const [dataUser, setDataUser] = useState([]);
     useEffect(() => {
         const db = database;
@@ -56,7 +72,8 @@ function SignUp({database}) {
         if (passwordInp !== repasswordInp) {
             alert("Invalid Re-password!")
         }
-        set(ref(database, `users/${usernameInp}`), {
+
+        set(ref(database, `users/username-${usernameInp}`), {
             password: passwordInp
         }).then(() => {
             console.log("Record added successfully");
@@ -64,8 +81,19 @@ function SignUp({database}) {
         .catch((error) => {
             console.error("Error adding record: ", error);
         });
-        alert("Registration successful!")
-        navigate(`/${usernameInp}`)
+        alert("Registration successful!");
+        setUsername(`username-${usernameInp}`);
+
+        sessionStorage.setItem('user', JSON.stringify({
+            'username': usernameInp,
+            'password': passwordInp
+        }));
+        localStorage.setItem('user', JSON.stringify({
+            'username': usernameInp,
+            'password': passwordInp
+        }));
+
+        navigate(`/${usernameInp}`);
     }
 
     return (

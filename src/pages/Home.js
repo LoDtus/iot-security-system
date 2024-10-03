@@ -21,6 +21,7 @@ function Home({database, username}) {
     useEffect(() => {
         const db = database;
         const dataUser = ref(db, `users/${username}/`);
+        
         const unsubscribe = onValue(dataUser, (snapshot) => {
             const temp = snapshot.val();
             setData(temp);
@@ -39,6 +40,8 @@ function Home({database, username}) {
     }, [data]);
 
     useEffect(() => {
+        console.log(field);
+        
         if (field.length > 0) {       
             setIdDevice([field[0], 0]);
             for (let i=0; i<field.length; i++) {
@@ -63,6 +66,8 @@ function Home({database, username}) {
                     })
                 });
             } 
+        } else {
+
         }
     }, [field]);
 
@@ -79,7 +84,7 @@ function Home({database, username}) {
                         openAddDevice={openAddDevice}
                         setOpenAddDevice={setOpenAddDevice}
                     />
-                    <Dashboard
+                    {field.length > 1 && <Dashboard
                         database={database}
                         username={username}
                         idDevice={idDevice[0]}
@@ -87,7 +92,12 @@ function Home({database, username}) {
                         wifiName={wifiName[idDevice[1]]}
                         openRFID={openRFID}
                         setOpenRFID={setOpenRFID}
-                    />
+                    />}
+                    {field.length < 2 && <div
+                        className='bg-white rounded-lg border w-full flex justify-center items-center font-semibold'>
+                        Chưa có thiết bị nào được kết nối
+                    </div>
+                    }
                 </div>
             </main>
             <Footer/>

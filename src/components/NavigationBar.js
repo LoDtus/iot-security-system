@@ -1,7 +1,6 @@
 import '../App.css'
 
 function NavigationBar({setIdDevice, field, deviceName, wifiName, openAddDevice, setOpenAddDevice}) {
-
     return (
         <div className="navigationBar basis-[20%]">
             <div className='font-semibold text-xl mb-3'>List Device</div>

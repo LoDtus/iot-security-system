@@ -21,14 +21,14 @@ export const connectDevice = async (deviceBLE, characteristicBLE, value, firebas
                 const valueArray = encoder.encode(jsonString); 
                 await characteristicBLE.writeValue(valueArray);
 
-                firebaseFunction();
-    
+                
                 // Đọc lại phản hồi từ ESP32 để kiểm tra
                 const response = await characteristicBLE.readValue();
                 const decoder = new TextDecoder("utf-8");
                 const responseText = decoder.decode(response);
-    
+                
                 console.log("Response from Security System:", responseText);
+                // firebaseFunction();
                 alert(`Security System response: ${responseText}`);
             } catch (error) {
                 console.error("Failed to send value:", error);
